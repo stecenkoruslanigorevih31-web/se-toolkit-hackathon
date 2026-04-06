@@ -1,32 +1,81 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Мотивационный Генератор</title>
+  <title>Motivational Generator</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <div class="card">
-      <h1>🚀 Генератор Мотивации</h1>
-      <p class="subtitle">Нажмите кнопку и получите вдохновение на день</p>
-      
-      <div id="motivation-box" class="motivation-box">
-        <p id="motivation-text">Нажмите кнопку, чтобы получить мотивационный текст...</p>
+  <div class="app-container">
+    <!-- LEFT PANEL: Motivation History -->
+    <aside class="panel panel-left" aria-label="Motivation History">
+      <h2>📜 History</h2>
+      <div id="history-list" class="scrollable-list">
+        <p class="empty-state">No history yet. Generate your first motivation!</p>
       </div>
-      
-      <button id="generate-btn" class="btn" onclick="generateMotivation()">
-        Получить Мотивацию ✨
+      <button id="clear-history-btn" class="btn btn-secondary btn-small" onclick="clearHistory()" aria-label="Clear History">
+        🗑️ Clear History
       </button>
-      
+    </aside>
+
+    <!-- CENTER PANEL: Controls & Output -->
+    <main class="panel panel-center" aria-label="Controls and Output">
+      <h1>✨ Motivational Generator</h1>
+      <p class="subtitle">Select a field and mood, then generate inspiration</p>
+
+      <!-- Field Selection -->
+      <div class="selection-group">
+        <label class="selection-label">Field</label>
+        <div class="toggle-group" role="group" aria-label="Field Selection">
+          <button class="toggle-btn" data-field="sport" onclick="selectField(this)" aria-label="Sport and Fitness">🏋️ Sport &amp; Fitness</button>
+          <button class="toggle-btn" data-field="study" onclick="selectField(this)" aria-label="Study and Learning">📚 Study &amp; Learning</button>
+          <button class="toggle-btn" data-field="career" onclick="selectField(this)" aria-label="Career and Success">💼 Career &amp; Success</button>
+        </div>
+      </div>
+
+      <!-- Mood Selection -->
+      <div class="selection-group">
+        <label class="selection-label">Mood</label>
+        <div class="toggle-group" role="group" aria-label="Mood Selection">
+          <button class="toggle-btn" data-mood="energizing" onclick="selectMood(this)" aria-label="Energizing and Bold">⚡ Energizing &amp; Bold</button>
+          <button class="toggle-btn" data-mood="calm" onclick="selectMood(this)" aria-label="Calm and Focused">🧘 Calm &amp; Focused</button>
+          <button class="toggle-btn" data-mood="unstoppable" onclick="selectMood(this)" aria-label="Unstoppable and Driven">🔥 Unstoppable &amp; Driven</button>
+        </div>
+      </div>
+
+      <!-- Output Display -->
+      <div id="output-box" class="output-box">
+        <p id="output-text">Select a field and mood, then click Generate to get motivated...</p>
+      </div>
+
+      <!-- Loading State -->
       <div id="loading" class="loading" style="display: none;">
         <div class="spinner"></div>
-        <p>Генерируем мотивацию...</p>
+        <p>Generating motivation...</p>
       </div>
-      
+
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <button id="generate-btn" class="btn btn-primary" onclick="generateMotivation()" aria-label="Generate Motivation">
+          Generate Motivation ✨
+        </button>
+        <button id="save-fav-btn" class="btn btn-secondary" onclick="saveToFavorites()" style="display: none;" aria-label="Save to Favorites">
+          ★ Save to Favorites
+        </button>
+      </div>
+
+      <!-- Error Message -->
       <div id="error-msg" class="error-msg" style="display: none;"></div>
-    </div>
+    </main>
+
+    <!-- RIGHT PANEL: Favorites Collection -->
+    <aside class="panel panel-right" aria-label="Favorites Collection">
+      <h2>⭐ Favorites</h2>
+      <div id="favorites-list" class="scrollable-list">
+        <p class="empty-state">Save your favorite quotes here to revisit them anytime.</p>
+      </div>
+    </aside>
   </div>
 
   <script src="app.js"></script>

@@ -1,19 +1,32 @@
 {
   "name": "motivational-generator",
   "version": "1.0.0",
-  "description": "Generate motivational text using Qwen AI",
+  "description": "AI-powered motivational sentence generator with field and mood selection",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js"
+    "dev": "node server.js",
+    "test": "jest --forceExit --detectOpenHandles",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
-  "keywords": ["motivation", "ai", "qwen"],
+  "keywords": [
+    "motivation",
+    "ai",
+    "openrouter",
+    "generator"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.18.2",
     "axios": "^1.6.0",
     "cors": "^2.8.5",
-    "dotenv": "^16.3.1"
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "sql.js": "^1.14.1"
+  },
+  "devDependencies": {
+    "jest": "^30.3.0",
+    "supertest": "^7.2.2"
   }
 }

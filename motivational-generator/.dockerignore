@@ -1,0 +1,32 @@
+node_modules/
+npm-debug.log*
+.env
+.env.local
+.env.production
+
+# Database files (don't include in image)
+data/
+*.db
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Documentation
+README.md
+LICENSE
