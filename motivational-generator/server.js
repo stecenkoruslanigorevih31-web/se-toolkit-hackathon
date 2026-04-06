@@ -130,65 +130,104 @@ app.post('/api/generate', async (req, res) => {
 
     console.log(`📤 Sending request to OpenRouter API... [Field: ${field}, Mood: ${mood}]`);
 
-    const response = await axios.post(
-      OPENROUTER_API_URL,
-      {
-        model: 'openrouter/free',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt }
-        ],
-        max_tokens: 200,
-        temperature: 0.7
-      },
-      {
-        headers: {
-          'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-          'HTTP-Referer': 'http://localhost:3000',
-          'X-Title': 'Motivational Generator',
-          'Content-Type': 'application/json'
-        },
-        timeout: 30000
+    // Use specific free models for reliability, with fallback chain
+    const models = [
+      'meta-llama/llama-3.3-70b-instruct:free',
+      'qwen/qwen3-8b:free',
+      'openrouter/free'
+    ];
+
+    let lastError = null;
+
+    for (const model of models) {
+      try {
+        const response = await axios.post(
+          OPENROUTER_API_URL,
+          {
+            model,
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: userPrompt }
+            ],
+            max_tokens: 200,
+            temperature: 0.7
+          },
+          {
+            headers: {
+              'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+              'HTTP-Referer': 'http://localhost:3000',
+              'X-Title': 'Motivational Generator',
+              'Content-Type': 'application/json'
+            },
+            timeout: 30000
+          }
+        );
+
+        console.log('📥 Response received from OpenRouter');
+        console.log('📊 Model used:', model);
+
+        // Extract text from various possible response formats
+        let motivation = '';
+
+        if (response.data?.choices?.[0]?.message?.content) {
+          motivation = response.data.choices[0].message.content.trim();
+        } else if (response.data?.choices?.[0]?.delta?.content) {
+          motivation = response.data.choices[0].delta.content.trim();
+        } else if (response.data?.output) {
+          motivation = response.data.output.trim();
+        } else if (response.data?.choices?.[0]?.text) {
+          motivation = response.data.choices[0].text.trim();
+        } else if (response.data?.content) {
+          motivation = response.data.content.trim();
+        } else {
+          // Log the actual response for debugging
+          const rawKeys = Object.keys(response.data || {});
+          console.warn('⚠️ Unexpected format. Response keys:', rawKeys);
+          console.warn('⚠️ Response data:', JSON.stringify(response.data).substring(0, 500));
+          throw new Error('Unexpected API response format');
+        }
+
+        if (!motivation || motivation.length < 5) {
+          throw new Error('Empty or invalid response from API');
+        }
+
+        // Clean up markdown formatting if present
+        motivation = motivation
+          .replace(/\*\*/g, '')
+          .replace(/\*/g, '')
+          .replace(/^["']|["']$/g, '')
+          .trim();
+
+        // Save to history in SQLite
+        const id = getNextId('history');
+        db.run(
+          `INSERT INTO history (id, text, field, mood, created_at) VALUES (?, ?, ?, ?, datetime('now'))`,
+          [id, motivation, field || 'career', mood || 'energizing']
+        );
+        saveDatabase();
+
+        const historyItem = {
+          id,
+          text: motivation,
+          field: field || 'career',
+          mood: mood || 'energizing',
+          createdAt: new Date().toISOString()
+        };
+
+        console.log('✅ Motivation generated and saved to database');
+        return res.json({ motivation: historyItem });
+
+      } catch (modelError) {
+        console.warn(`⚠️ Model ${model} failed: ${modelError.message}`);
+        lastError = modelError;
+        // Continue to next model
+        continue;
       }
-    );
-
-    console.log('📥 Response received from OpenRouter');
-
-    let motivation = '';
-
-    if (response.data?.choices?.[0]?.message?.content) {
-      motivation = response.data.choices[0].message.content.trim();
-    } else if (response.data?.output) {
-      motivation = response.data.output.trim();
-    } else if (response.data?.choices?.[0]?.text) {
-      motivation = response.data.choices[0].text.trim();
-    } else {
-      throw new Error('Unexpected API response format');
     }
 
-    if (!motivation || motivation.length < 5) {
-      throw new Error('Empty or invalid response from API');
-    }
-
-    // Save to history in SQLite
-    const id = getNextId('history');
-    db.run(
-      `INSERT INTO history (id, text, field, mood, created_at) VALUES (?, ?, ?, ?, datetime('now'))`,
-      [id, motivation, field || 'career', mood || 'energizing']
-    );
-    saveDatabase();
-
-    const historyItem = {
-      id,
-      text: motivation,
-      field: field || 'career',
-      mood: mood || 'energizing',
-      createdAt: new Date().toISOString()
-    };
-
-    console.log('✅ Motivation generated and saved to database');
-    res.json({ motivation: historyItem });
-
+    // All models failed
+    console.error('❌ All models failed. Last error:', lastError.message);
+    throw new Error(lastError.message || 'All AI models failed to respond');
   } catch (error) {
     console.error('❌ Error calling OpenRouter API:');
     console.error('Status:', error.response?.status);
@@ -197,7 +236,7 @@ app.post('/api/generate', async (req, res) => {
 
     res.status(500).json({
       error: 'Failed to generate motivation text',
-      details: error.response?.data?.error?.message || error.message
+      details: error.response?.data?.error?.message || error.response?.data?.message || error.message
     });
   }
 });
