@@ -1,62 +1,244 @@
 # ✨ Motivational Generator
 
-An AI-powered web application that generates personalized motivational sentences based on selected **fields** and **moods**. Features a beautiful three-panel responsive UI with history tracking and favorites management.
+AI-powered web application that generates personalized motivational sentences based on selected fields and moods.
 
-## 🚀 Features
+---
 
-- **AI-Powered Generation** — Uses OpenRouter's free LLM API (Llama/Gemma models)
-- **Field Selection** — Sport & Fitness, Study & Learning, Career & Success
-- **Mood Selection** — Energizing & Bold, Calm & Focused, Unstoppable & Driven
-- **History Panel** — Scrollable list of all generated sentences with timestamps and tags
-- **Favorites Panel** — Save and manage your favorite motivational quotes
-- **Persistent Database** — SQLite storage that survives server restarts
-- **Responsive Design** — Works on desktop (three-panel) and mobile (stacked)
-- **Docker Support** — Fully containerized with Docker Compose + Nginx reverse proxy
+## Demo
 
-## 📋 Prerequisites
+> **Screenshot 1 — Main Interface**
+> 
+> Three-panel layout: History (left), Controls & Output (center), Favorites (right)
+> 
+> ![Screenshot placeholder — open http://localhost:3000 for live demo]
 
-- **Node.js** >= 18.0
-- **npm** >= 9.0
-- **Docker & Docker Compose** (optional, for containerized deployment)
-- **OpenRouter API Key** — Get one free at [openrouter.ai](https://openrouter.ai)
+> **Screenshot 2 — Generated Motivation**
+>
+> User selects "Career & Success" + "Unstoppable & Driven", receives AI-generated motivational text
+>
+> ![Screenshot placeholder — open http://localhost:3000 for live demo]
 
-## 🛠️ Local Development
+---
 
-### 1. Clone the repository
+## Product Context
+
+### End Users
+Students and professionals who need daily motivation, inspiration, and encouragement tailored to their current situation.
+
+### Problem
+Lack of personalized, context-specific motivational content. Generic motivational quotes don't match the user's specific field (sport, study, career) or current mood (energizing, calm, unstoppable).
+
+### Our Solution
+An AI-powered generator where users select:
+- **Field**: Sport & Fitness, Study & Learning, Career & Success
+- **Mood**: Energizing & Bold, Calm & Focused, Unstoppable & Driven
+
+The AI generates personalized motivational sentences. Users can save favorites, view history, and organize their inspiration library.
+
+---
+
+## Features
+
+### Implemented ✅
+| Feature | Description |
+|---------|-------------|
+| AI Generation | OpenRouter free API (Llama/Gemma models) |
+| Field Selection | 3 toggle buttons (Sport, Study, Career) |
+| Mood Selection | 3 toggle buttons (Energizing, Calm, Unstoppable) |
+| Output Display | Prominent text area with loading state |
+| Save to Favorites | One-click save with dedicated panel |
+| History Panel | Scrollable list with timestamps and tags |
+| Favorites Panel | Saved quotes with remove functionality |
+| Persistent Database | SQLite (sql.js) — data survives restarts |
+| Responsive Design | Desktop (3-panel) and mobile (stacked) |
+| Docker Support | Docker Compose + Nginx reverse proxy |
+| Test Suite | Jest + Supertest (9 tests passing) |
+| Health Checks | Docker and manual health endpoints |
+
+### Not Yet Implemented
+| Feature | Priority |
+|---------|----------|
+| User authentication | Low |
+| Share to social media | Low |
+| Text-to-speech playback | Low |
+| Daily notification emails | Low |
+
+---
+
+## Usage
+
+### Quick Start
 
 ```bash
-git clone <repository-url>
+# Clone the repository
+git clone <your-repo-url>
 cd motivational-generator
-```
 
-### 2. Install dependencies
-
-```bash
+# Install dependencies
 npm install
-```
 
-### 3. Configure environment
-
-```bash
+# Configure environment
 cp .env.example .env
-```
+# Edit .env and add your OPENROUTER_API_KEY (free from https://openrouter.ai)
 
-Edit `.env` and add your OpenRouter API key:
-
-```env
-OPENROUTER_API_KEY=sk-or-v1-your-key-here
-PORT=3000
-```
-
-### 4. Start the server
-
-```bash
+# Start the server
 npm start
 ```
 
-The application will be available at **http://localhost:3000**
+Open **http://localhost:3000** in your browser.
 
-## 🧪 Running Tests
+### Using the App
+
+1. **Select a Field** — click one of: Sport & Fitness, Study & Learning, Career & Success
+2. **Select a Mood** — click one of: Energizing & Bold, Calm & Focused, Unstoppable & Driven
+3. **Click "Generate Motivation"** — AI generates a personalized motivational sentence
+4. **Save to Favorites** — click the ★ Save button to keep your favorite quotes
+5. **View History** — see all generated sentences in the left panel
+6. **Manage Favorites** — view saved quotes in the right panel, remove ones you don't want
+
+### API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/health` | Health check |
+| `POST` | `/api/generate` | Generate motivation (body: `{field, mood}`) |
+| `GET` | `/api/history` | Get all generated sentences |
+| `DELETE` | `/api/history` | Clear history |
+| `GET` | `/api/favorites` | Get saved favorites |
+| `POST` | `/api/favorites` | Add to favorites |
+| `DELETE` | `/api/favorites/:id` | Remove from favorites |
+
+---
+
+## Deployment
+
+### Target OS
+Ubuntu 24.04 LTS (same as university VMs)
+
+### Prerequisites (what should be installed on the VM)
+
+```bash
+# Update system
+sudo apt update && sudo apt upgrade -y
+
+# Install Node.js and npm
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt install -y nodejs
+
+# Install Docker
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+sudo usermod -aG docker $USER
+
+# Install Git
+sudo apt install -y git
+```
+
+### Option A: Docker Compose (Recommended)
+
+```bash
+# Clone repository
+git clone <your-repo-url>
+cd motivational-generator
+
+# Create environment file
+cp .env.example .env
+# Edit .env and add OPENROUTER_API_KEY
+
+# Build and deploy
+docker-compose up -d --build
+
+# Verify
+docker-compose ps
+curl http://localhost:3001/health
+```
+
+Access at: **http://your-vm-ip:3001**
+
+### Option B: Direct Node.js (No Docker)
+
+```bash
+# Clone repository
+git clone <your-repo-url>
+cd motivational-generator
+
+# Install dependencies
+npm install
+
+# Configure environment
+cp .env.example .env
+# Edit .env and add OPENROUTER_API_KEY
+
+# Run tests
+npm test
+
+# Start with PM2 (persistent background process)
+sudo npm install -g pm2
+pm2 start server.js --name motivational-generator
+pm2 save
+pm2 startup
+
+# Check status
+pm2 status
+```
+
+Access at: **http://your-vm-ip:3000**
+
+### Option C: Docker Compose with Nginx (Port 80)
+
+```bash
+# Clone and configure
+git clone <your-repo-url>
+cd motivational-generator
+
+cp .env.example .env
+# Edit .env with your API key
+
+# Deploy (includes Nginx reverse proxy on port 80)
+docker-compose up -d --build
+```
+
+Access at: **http://your-vm-ip** (port 80)
+
+### Stopping the Service
+
+```bash
+# Docker Compose
+docker-compose down
+
+# PM2
+pm2 stop motivational-generator
+```
+
+---
+
+## Project Structure
+
+```
+motivational-generator/
+├── data/                    # SQLite database (auto-created, gitignored)
+│   └── motivational.db
+├── public/                  # Frontend static files
+│   ├── index.html           # Three-panel layout
+│   ├── app.js               # Client-side JavaScript
+│   └── style.css            # Responsive CSS
+├── tests/                   # Test files
+│   └── api.test.js          # 9 API endpoint tests
+├── .dockerignore            # Docker ignore rules
+├── .env.example             # Environment template
+├── .gitignore               # Git ignore rules
+├── Dockerfile               # Docker image definition
+├── docker-compose.yml       # Multi-service orchestration
+├── jest.config.js           # Jest test configuration
+├── LICENSE                  # MIT License
+├── nginx.conf               # Nginx reverse proxy
+├── package.json             # Node.js dependencies
+└── server.js                # Express.js backend
+```
+
+---
+
+## Testing
 
 ```bash
 # Run all tests
@@ -64,174 +246,12 @@ npm test
 
 # Run with coverage
 npm run test:coverage
-
-# Run in watch mode
-npm run test:watch
 ```
 
-## 🐳 Docker Deployment
+All 9 tests must pass before deployment.
 
-### Using Docker Compose (Recommended)
+---
 
-1. **Create `.env` file** with your API key:
+## License
 
-```bash
-cp .env.example .env
-# Edit .env and add your OPENROUTER_API_KEY
-```
-
-2. **Build and start services:**
-
-```bash
-docker-compose up -d --build
-```
-
-This starts:
-- **motivational-generator** — Node.js app on port 3000
-- **nginx** — Reverse proxy on port 80
-- **db-data volume** — Persistent SQLite database
-
-3. **Access the app:**
-
-- Via Nginx: **http://localhost**
-- Direct: **http://localhost:3000**
-
-4. **View logs:**
-
-```bash
-docker-compose logs -f app
-```
-
-5. **Stop services:**
-
-```bash
-docker-compose down
-```
-
-### Build Docker image manually
-
-```bash
-docker build -t motivational-generator .
-docker run -p 3000:3000 --env-file .env -v db-data:/app/data motivational-generator
-```
-
-## 📁 Project Structure
-
-```
-motivational-generator/
-├── data/                    # SQLite database (auto-created, gitignored)
-│   └── motivational.db
-├── public/                  # Frontend static files
-│   ├── index.html           # Main HTML with three-panel layout
-│   ├── app.js               # Client-side JavaScript
-│   └── style.css            # Responsive CSS styles
-├── tests/                   # Test files
-│   └── api.test.js          # API endpoint tests
-├── .dockerignore            # Docker ignore rules
-├── .env                     # Environment variables (gitignored)
-├── .env.example             # Environment template
-├── .gitignore               # Git ignore rules
-├── docker-compose.yml       # Docker Compose configuration
-├── Dockerfile               # Docker image definition
-├── nginx.conf               # Nginx reverse proxy config
-├── package.json             # Node.js dependencies
-└── server.js                # Express.js backend server
-```
-
-## 🔌 API Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/health` | Health check |
-| `POST` | `/api/generate` | Generate motivational sentence |
-| `GET` | `/api/history` | Get all generated sentences |
-| `DELETE` | `/api/history` | Clear history |
-| `GET` | `/api/favorites` | Get saved favorites |
-| `POST` | `/api/favorites` | Add to favorites |
-| `DELETE` | `/api/favorites/:id` | Remove from favorites |
-
-### Example: Generate Motivation
-
-```bash
-curl -X POST http://localhost:3000/api/generate \
-  -H "Content-Type: application/json" \
-  -d '{"field": "sport", "mood": "energizing"}'
-```
-
-**Response:**
-```json
-{
-  "motivation": {
-    "id": 1,
-    "text": "Push past your limits! Every rep counts, every drop of sweat proves you're unstoppable.",
-    "field": "sport",
-    "mood": "energizing",
-    "createdAt": "2026-04-05T19:00:00.000Z"
-  }
-}
-```
-
-## 🗄️ Database
-
-Uses **SQLite** via `sql.js` (pure JavaScript implementation):
-- **No external database server required**
-- **Persistent storage** — survives restarts
-- **File-based** — stored in `data/motivational.db`
-- **Docker volume** — mapped to `db-data` volume in production
-
-## 🌐 Deployment to Cloud
-
-### Deploy to Render/Railway/Fly.io
-
-1. Push code to GitHub
-2. Connect repository to hosting service
-3. Add environment variable: `OPENROUTER_API_KEY`
-4. Deploy!
-
-### Deploy to VPS
-
-```bash
-# Clone repo
-git clone <url> && cd motivational-generator
-
-# Setup
-cp .env.example .env
-# Edit .env with your API key
-
-# Docker Compose
-docker-compose up -d --build
-
-# Access at http://your-server-ip
-```
-
-## 🎨 UI Overview
-
-### Desktop Layout (Three Panels)
-- **Left**: Motivation History — scrollable list with timestamps and tags
-- **Center**: Controls & Output — field/mood selection, generate button, display area
-- **Right**: Favorites — saved quotes with remove functionality
-
-### Mobile Layout
-Panels stack vertically for optimal mobile experience.
-
-## 🛡️ Best Practices
-
-- **Environment Variables** — API keys never committed to Git
-- **Error Handling** — All endpoints have try/catch blocks
-- **Input Validation** — Validates required fields before processing
-- **Health Checks** — Docker and manual health endpoints
-- **Test Coverage** — Jest + Supertest for API testing
-- **Docker Healthcheck** — Automatic container health monitoring
-- **Nginx Reverse Proxy** — Production-ready HTTP routing
-
-## 📝 License
-
-ISC
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+MIT — see [LICENSE](LICENSE) file.

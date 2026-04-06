@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Motivational Generator — Presentation</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1a1a2e; color: #eee; }
+    .slide {
+      width: 1280px; height: 720px; margin: 20px auto; padding: 60px 80px;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      border-radius: 15px; display: flex; flex-direction: column; justify-content: center;
+      page-break-after: always; box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .slide h1 { font-size: 3em; color: #e94560; margin-bottom: 20px; }
+    .slide h2 { font-size: 2.2em; color: #e94560; margin-bottom: 25px; border-bottom: 3px solid #e94560; padding-bottom: 10px; }
+    .slide p, .slide li { font-size: 1.3em; line-height: 1.8; color: #ddd; }
+    .slide ul { padding-left: 30px; }
+    .slide li { margin-bottom: 10px; }
+    .subtitle { font-size: 1.5em; color: #aaa; }
+    .info { font-size: 1.1em; color: #999; margin-top: 40px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px; }
+    .box { background: rgba(255,255,255,0.05); padding: 25px; border-radius: 10px; border-left: 4px solid #e94560; }
+    .box h3 { color: #e94560; margin-bottom: 10px; font-size: 1.3em; }
+    .box p { font-size: 1.1em; color: #ccc; }
+    .tag { display: inline-block; background: #e94560; color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.9em; margin: 5px; }
+    .links { text-align: center; margin-top: 30px; }
+    .links a { color: #4fc3f7; font-size: 1.3em; text-decoration: none; }
+    .links a:hover { text-decoration: underline; }
+    .qr-placeholder { width: 150px; height: 150px; background: white; margin: 10px auto; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8em; text-align: center; }
+  </style>
+</head>
+<body>
+
+  <!-- SLIDE 1: Title -->
+  <div class="slide">
+    <h1>✨ Motivational Generator</h1>
+    <p class="subtitle">AI-powered personalized motivation with field and mood selection</p>
+    <div class="info">
+      <p><strong>Name:</strong> [Your Name]</p>
+      <p><strong>Email:</strong> [your.email@university.edu]</p>
+      <p><strong>Group:</strong> [Your Group]</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: Context -->
+  <div class="slide">
+    <h2>Context</h2>
+    <div class="grid">
+      <div class="box">
+        <h3>👤 End-User</h3>
+        <p>Students and professionals who need daily motivation and inspiration tailored to their current situation.</p>
+      </div>
+      <div class="box">
+        <h3>❌ Problem</h3>
+        <p>Generic motivational quotes don't match the user's specific field (sport, study, career) or current mood.</p>
+      </div>
+      <div class="box" style="grid-column: 1 / -1;">
+        <h3>💡 Product Idea</h3>
+        <p>AI-powered web app where users select a field and mood to receive personalized motivational sentences, save favorites, and build an inspiration library.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: Implementation -->
+  <div class="slide">
+    <h2>Implementation</h2>
+    <ul>
+      <li><strong>Stack:</strong> Node.js + Express.js backend, SQLite database, vanilla JS frontend</li>
+      <li><strong>AI:</strong> OpenRouter free API (Llama/Gemma models)</li>
+      <li><strong>UI:</strong> Responsive three-panel layout (History, Controls, Favorites)</li>
+    </ul>
+    <div class="grid" style="margin-top: 25px;">
+      <div class="box">
+        <h3>Version 1</h3>
+        <p>Core generation feature with field/mood selection, history, favorites, and persistent SQLite storage.</p>
+      </div>
+      <div class="box">
+        <h3>Version 2</h3>
+        <p>Docker Compose deployment, Nginx reverse proxy, Jest test suite (9 tests), comprehensive README, MIT license.</p>
+      </div>
+    </div>
+    <p style="margin-top: 20px; color: #4fc3f7;"><strong>TA Feedback Addressed:</strong> [Add feedback points from your TA here]</p>
+  </div>
+
+  <!-- SLIDE 4: Demo -->
+  <div class="slide">
+    <h2>🎬 Demo</h2>
+    <p style="font-size: 1.5em; margin-bottom: 30px;">Pre-recorded video demonstration of Version 2</p>
+    <div class="grid">
+      <div class="box">
+        <h3>Step 1: Generate</h3>
+        <p>Select field + mood → Click "Generate" → See AI-powered motivational sentence</p>
+      </div>
+      <div class="box">
+        <h3>Step 2: Manage</h3>
+        <p>Save to favorites, view history, remove unwanted quotes</p>
+      </div>
+    </div>
+    <p style="margin-top: 30px; color: #aaa; font-style: italic;">Video: 2 minutes max with voice-over</p>
+  </div>
+
+  <!-- SLIDE 5: Links -->
+  <div class="slide">
+    <h2>🔗 Links</h2>
+    <div class="grid">
+      <div class="box" style="text-align: center;">
+        <h3>GitHub Repository</h3>
+        <p><a href="#" style="color: #4fc3f7;">https://github.com/[your-username]/se-toolkit-hackathon</a></p>
+        <div class="qr-placeholder" style="margin-top: 15px;">QR Code<br>for GitHub<br>(generate at<br>qr-code-generator.com)</div>
+      </div>
+      <div class="box" style="text-align: center;">
+        <h3>Deployed Product</h3>
+        <p><a href="#" style="color: #4fc3f7;">http://[your-vm-ip]:3001</a></p>
+        <div class="qr-placeholder" style="margin-top: 15px;">QR Code<br>for Deployed<br>Product (generate<br>at qr-code-generator.com)</div>
+      </div>
+    </div>
+    <p style="text-align: center; margin-top: 25px; color: #999;">Branch: <code style="background: rgba(255,255,255,0.1); padding: 5px 10px; border-radius: 5px;">feature/motivational-generator</code></p>
+  </div>
+
+</body>
+</html>
